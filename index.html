@@ -181,7 +181,7 @@
                         <div class="grid grid-cols-3 gap-2">
                             <input v-model="studentLogin.customClass" placeholder="班別(例: 2B)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                             <input v-model="studentLogin.customStudentId" placeholder="學號(1-40)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-                            <input v-model="studentLogin.customName" placeholder="旅員姓名" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                            <input v-model="studentLogin.customName" placeholder="成員姓名" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                         </div>
                         <button @click="handleStudentLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm active:scale-95">
                             進入學生申請通道
@@ -319,7 +319,7 @@
                             </div>
                         </div>
                         <div v-if="filteredLoans.length === 0" class="text-center py-12 text-slate-400 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
-                            <p class="text-sm font-bold">目前沒有符合篩選條件的借還記錄。</p>
+                            <p class="text-sm font-bold">目前沒有符合篩選條件 of 借還記錄。</p>
                         </div>
                         <div v-else class="overflow-x-auto border border-slate-100 rounded-2xl custom-scrollbar">
                             <table class="w-full text-left border-collapse min-w-[800px]">
@@ -379,7 +379,7 @@
                                 <tbody class="divide-y divide-slate-100 font-medium">
                                     <tr v-for="stat in memberStats" :key="stat.name + stat.class" class="hover:bg-slate-50/60">
                                         <td class="p-3 text-slate-500 font-mono">{{ stat.class }}</td>
-                                        <td class="p-3 font-bold text-slate-800">{{ stat.studentId ? '[' + stat.studentId + '] ' : '' }}{{ stat.name }}</td>
+                                        <td class="p-3 font-bold text-slate-800">{{ stat.studentId ? '[' + stat.studentId + '號] ' : '' }}{{ stat.name }}</td>
                                         <td class="p-3 text-center font-bold text-blue-700 bg-blue-50/10 border border-blue-50">{{ stat.totalLoans }} 次</td>
                                         <td class="p-3 text-center font-black text-amber-700 bg-amber-50/10 border border-amber-100">
                                             <span v-if="stat.activeLoans > 0" class="bg-amber-100 px-2 py-0.5 rounded-full">{{ stat.activeLoans }}</span>
@@ -589,7 +589,7 @@
                                 <option v-for="cls in standardClasses" :key="cls" :value="cls">{{ cls }}</option>
                             </select>
                             <input v-model="newStudent.studentId" placeholder="輸入學號 (例: 12)" class="p-2 border border-slate-200 rounded-xl text-xs w-[25%] outline-none bg-white" />
-                            <input v-model="newStudent.name" placeholder="輸入旅員姓名" class="p-2 border border-slate-200 rounded-xl text-xs w-[28%] outline-none bg-white" />
+                            <input v-model="newStudent.name" placeholder="輸入成員姓名" class="p-2 border border-slate-200 rounded-xl text-xs w-[28%] outline-none bg-white" />
                             <button @click="addNewStudent" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shrink-0 transition shadow-sm">
                                 <i class="fa-solid fa-user-plus mr-1"></i>新增
                             </button>
@@ -608,7 +608,7 @@
                                 <!-- ✕ 除名按鈕 -->
                                 <button @click.stop="removeStudent(std)" class="text-slate-400 hover:text-rose-500 ml-1.5" title="移出名冊(不刪除歷史明細)"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                             </div>
-                            <div v-if="filteredMembersList.length === 0" class="text-xs text-slate-400 p-2">該篩選條件下目前無任何旅員。</div>
+                            <div v-if="filteredMembersList.length === 0" class="text-xs text-slate-400 p-2">該篩選條件下目前無任何成員。</div>
                         </div>
                     </div>
 
@@ -766,7 +766,7 @@
 
                 <div class="bg-white rounded-3xl border p-6 shadow space-y-4">
                     <h3 class="font-black text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-suitcase text-emerald-600"></i> 我目前名下登記借用中的非消耗裝備</h3>
-                    <div v-if="myBorrowedItems.length === 0" class="text-center py-8 text-slate-400 border border-dashed rounded-xl bg-slate-50/20 text-xs font-bold">目前您手上沒有未歸還的裝備物品。</div>
+                    <div v-if="myBorrowedItems.length === 0" class="text-center py-8 text-slate-400 border border-dashed rounded-xl bg-slate-50/20 text-xs font-bold">目前您手上沒有未歸還的營地裝備物品。</div>
                     <div class="overflow-x-auto border border-slate-100 rounded-xl text-xs sm:text-sm custom-scrollbar" v-else>
                         <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
@@ -867,7 +867,7 @@
         </main>
 
         <footer class="bg-emerald-950 text-emerald-300 text-center py-6 text-xs border-t border-emerald-900 mt-12 shrink-0">
-            <div class="max-w-7xl mx-auto px-4"><p class="font-bold text-amber-400">© 2026 香港道教聯合會青松中學 EKG50 童軍物資中心 - 數據整合決策看板系統 @ 陳芷翹老師</p></div>
+            <div class="max-w-7xl mx-auto px-4"><p class="font-bold text-amber-400">© 2026 香港道教聯合會青松中學 EKG50 童軍物資中心 - 數據整合決策看板系統 @ 陳芷翹老師 </p></div>
         </footer>
     </div>
 
@@ -894,7 +894,8 @@
                     sheetUrl: localStorage.getItem('ccss_sheet_url') || ""
                 });
 
-                // 🔥 Firebase 連線配置已寫死
+                // 🔥【硬編碼寫死 Firebase 實時資料庫】
+                // 學生、老師、任何裝置一開網頁自動完成連線與實時同步，零手動設定！
                 const firebaseConfig = reactive({
                     apiKey: "AIzaSyBVsCM3HxQdwc0dBSy85QNfQtO_ub0E8uI",
                     databaseURL: "https://ekg50-scout-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -920,7 +921,7 @@
                     '6A', '6B', '6C', '6D'
                 ];
 
-                // 核心數據 (一開檔為空白，預設測試成員已刪除)
+                // 核心數據 (預設測試成員已成功刪除)
                 const catalog = ref(JSON.parse(localStorage.getItem('scout_catalog')) || []);
                 const purchases = ref(JSON.parse(localStorage.getItem('scout_purchases')) || []);
                 const consumption = ref(JSON.parse(localStorage.getItem('scout_consumption')) || []);
@@ -1040,7 +1041,7 @@
                 // ==================== Google Sheets 備份機制 ====================
                 const syncToGoogleSheetBackup = async () => {
                     if (!googleSheetConfig.apiUrl) {
-                        Swal.fire("未設置", "請先設定 Google Apps Script API 網址！", "warning");
+                        Swal.fire("未設置", "請先設定 Google Apps Script Web App API 網址！", "warning");
                         return;
                     }
                     isSyncing.value = true;
@@ -1245,10 +1246,8 @@
                     let studentId = studentLogin.customStudentId;
                     
                     if (!studentLogin.class) {
-                        // 手動輸入
                         if (!cls || !name) { Swal.fire('提示', '請選取或手動輸入隊員班別與姓名！', 'warning'); return; }
                     } else {
-                        // 下拉選擇
                         const matchedS = students.value.find(s => s.name === studentLogin.selectedName && s.class === cls);
                         if (matchedS) {
                             name = matchedS.name;
@@ -1548,7 +1547,7 @@
                     }).then(res => {
                         if (res.isConfirmed && res.value.consumer) {
                             const v = res.value;
-                            if (getAvailableStock(v.itemId) < v.qty) { Swal.fire('核銷失敗', '可用餘額不足！', 'error'); return; }
+                            if (getAvailableStock(v.itemId) < v.qty) { Swal.fire('核銷失敗', '物資可用餘額不足！', 'error'); return; }
                             const match = catalog.value.find(c => c.id === v.itemId);
                             const cId = 'C' + Date.now().toString().slice(-4);
                             const newConsume = {
@@ -1656,7 +1655,7 @@
                     }).then((res) => {
                         if (res.isConfirmed && res.value.newName) {
                             const v = res.value;
-                            // 1. 舊 Key 移除
+                            // 1. 舊 Key 舊 Key 移除
                             deleteFromFirebase('students', `${studentObj.class}_${studentObj.name}`);
                             
                             // 2. 寫入新 Key
@@ -2025,10 +2024,8 @@
                             const firstRow = jsonData[0];
                             const keys = Object.keys(firstRow);
                             
-                            // 判斷是否為名單匯入 (至少包含 2 列)
                             if (keys.length >= 2 && (keys[0].includes('班') || keys[1].includes('名') || keys[1].includes('姓') || keys[1].includes('號') || firstRow[keys[0]].toString().match(/[1-6][A-D]/i))) {
                                 
-                                // 🤖 智慧欄位特徵分類器 (Smart Row Classifier)
                                 let classKey = null;
                                 let nameKey = null;
                                 let studentIdKey = null;
@@ -2050,7 +2047,6 @@
                                         }
                                     }
 
-                                    // 給各個欄位屬性打分匹配
                                     if (key.includes('班') || classMatchCount > sampleSize * 0.4) {
                                         classKey = key;
                                     } else if (key.includes('號') || key.includes('學號') || key.includes('ID') || idMatchCount > sampleSize * 0.4) {
@@ -2060,7 +2056,6 @@
                                     }
                                 });
 
-                                // 後備方案 (如果沒檢測到，按最常見順序：第一個是班級，第二個是姓名，第三個是學號)
                                 if (!classKey) classKey = keys[0];
                                 if (!nameKey) nameKey = keys[1];
                                 if (!studentIdKey) studentIdKey = keys[2] || '';
@@ -2078,9 +2073,8 @@
                                         cnt++;
                                     }
                                 });
-                                importMessage.value = `👥 智慧特徵識別成功！已從 Excel 匯入 ${cnt} 名成員（班別、姓名、學號皆自動歸類），並實時更新！`;
+                                importMessage.value = `👥 智慧特徵識別成功！已從 Excel 匯入 ${cnt} 名成員，已自動連線實時更新！`;
                             } 
-                            // 判斷是否為物資目錄匯入
                             else if (firstRow.hasOwnProperty('物資編號') || firstRow.hasOwnProperty('物資名稱')) {
                                 let cnt = 0;
                                 jsonData.forEach(row => {
