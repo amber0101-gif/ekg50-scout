@@ -170,7 +170,7 @@
                             <label class="block text-xs font-bold text-slate-600 mb-1.5">2. 選擇姓名</label>
                             <select v-model="studentLogin.selectedName" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 text-sm" :disabled="!studentLogin.class">
                                 <option value="">-- 請選擇名字 --</option>
-                                <option v-for="s in filteredStudentList" :key="s.name" :value="s.name">{{ s.studentId ? '[' + s.studentId + '] ' : '' }}{{ s.name }}</option>
+                                <option v-for="s in filteredStudentList" :key="s.name" :value="s.name">{{ s.name }}</option>
                             </select>
                         </div>
                         <div class="relative flex py-2 items-center">
@@ -178,10 +178,9 @@
                             <span class="flex-shrink mx-4 text-slate-400 text-xs">或新成員手動輸入</span>
                             <div class="flex-grow border-t border-slate-200"></div>
                         </div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <input v-model="studentLogin.customClass" placeholder="班別(例:5A)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-                            <input v-model="studentLogin.customStudentId" placeholder="輸入學號" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-                            <input v-model="studentLogin.customName" placeholder="旅員姓名" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                        <div class="grid grid-cols-2 gap-3">
+                            <input v-model="studentLogin.customClass" placeholder="自訂班別 (例: 5A)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                            <input v-model="studentLogin.customName" placeholder="自訂旅員姓名" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                         </div>
                         <button @click="handleStudentLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm active:scale-95">
                             進入學生申請通道
@@ -362,7 +361,7 @@
                     <div class="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-xl space-y-4 animate-fadeIn">
                         <div class="flex items-center justify-between border-b pb-2">
                             <h3 class="text-base sm:text-lg font-black text-slate-800"><i class="fa-solid fa-chart-line text-emerald-600 mr-1"></i> 📊 小隊全體旅員租借歷史活躍指標統計</h3>
-                            <span class="text-xs text-slate-400">依班別 1A 至 6D 智慧排序</span>
+                            <span class="text-xs text-slate-400">依班別 1A 至 6D 自動排列</span>
                         </div>
                         <div class="overflow-x-auto border rounded-xl font-sans custom-scrollbar">
                             <table class="w-full text-left text-xs sm:text-sm min-w-[650px]">
@@ -379,7 +378,7 @@
                                 <tbody class="divide-y divide-slate-100 font-medium">
                                     <tr v-for="stat in memberStats" :key="stat.name + stat.class" class="hover:bg-slate-50/60">
                                         <td class="p-3 text-slate-500 font-mono">{{ stat.class }}</td>
-                                        <td class="p-3 font-bold text-slate-800">{{ stat.studentId ? '[' + stat.studentId + '] ' : '' }}{{ stat.name }}</td>
+                                        <td class="p-3 font-bold text-slate-800">{{ stat.name }}</td>
                                         <td class="p-3 text-center font-bold text-blue-700 bg-blue-50/10 border border-blue-50">{{ stat.totalLoans }} 次</td>
                                         <td class="p-3 text-center font-black text-amber-700 bg-amber-50/10 border border-amber-100">
                                             <span v-if="stat.activeLoans > 0" class="bg-amber-100 px-2 py-0.5 rounded-full">{{ stat.activeLoans }}</span>
@@ -528,9 +527,6 @@
                                         <button @click="deleteLoanItem(loan.id)" class="text-xs text-rose-600 hover:text-rose-800 font-bold"><i class="fa-solid fa-trash-can"></i></button>
                                     </td>
                                 </tr>
-                                <tr v-if="filteredLoans.length === 0">
-                                    <td colspan="6" class="p-6 text-center text-slate-400 text-xs">目前沒有任何固定裝備借還紀錄。</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -585,14 +581,12 @@
                             </div>
                         </div>
                         
-                        <!-- 手動錄入學號與姓名 -->
-                        <div class="flex flex-wrap gap-3 max-w-xl bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                            <select v-model="newStudent.class" class="p-2 border rounded-xl text-xs w-[22%] outline-none bg-white font-bold text-slate-700">
+                        <div class="flex gap-3 max-w-md bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                            <select v-model="newStudent.class" class="p-2 border rounded-xl text-xs w-1/3 outline-none bg-white font-bold text-slate-700">
                                 <option value="">選擇班級</option>
                                 <option v-for="cls in standardClasses" :key="cls" :value="cls">{{ cls }}</option>
                             </select>
-                            <input v-model="newStudent.studentId" placeholder="輸入學號 (例: 21005)" class="p-2 border border-slate-200 rounded-xl text-xs w-[25%] outline-none bg-white" />
-                            <input v-model="newStudent.name" placeholder="輸入旅員姓名" class="p-2 border border-slate-200 rounded-xl text-xs w-[28%] outline-none bg-white" />
+                            <input v-model="newStudent.name" placeholder="輸入旅員姓名" class="p-2 border border-slate-200 rounded-xl text-xs w-2/3 outline-none" />
                             <button @click="addNewStudent" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shrink-0 transition shadow-sm">
                                 <i class="fa-solid fa-user-plus mr-1"></i>新增
                             </button>
@@ -604,12 +598,11 @@
                                  :class="['px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 border transition cursor-pointer font-bold shadow-sm', 
                                           selectedMemberStats && selectedMemberStats.name === std.name && selectedMemberStats.class === std.class ? 'bg-emerald-950 border-emerald-950 text-white shadow' : 'bg-slate-50 hover:bg-slate-100 text-slate-700']">
                                 <span>[{{ std.class }}]</span>
-                                <span class="text-emerald-700" v-if="std.studentId">#{{ std.studentId }}</span>
                                 <span>{{ std.name }}</span>
-                                <!-- ✏️ 升班與資訊編輯按鈕 -->
+                                <!-- ✏️ 升班與編輯 -->
                                 <button @click.stop="openEditStudentModal(std)" class="text-slate-400 hover:text-emerald-600 ml-1.5" title="編輯班級或改名"><i class="fa-solid fa-user-pen text-[10px]"></i></button>
-                                <!-- ✕ 除名按鈕 -->
-                                <button @click.stop="removeStudent(std)" class="text-slate-400 hover:text-rose-500 ml-1.5" title="移出名冊(不刪除歷史明細)"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                                <!-- ✕ 除名 -->
+                                <button @click.stop="removeStudent(std)" class="text-slate-400 hover:text-rose-500 ml-1.5" title="移出名冊(保留歷史明細)"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                             </div>
                             <div v-if="filteredMembersList.length === 0" class="text-xs text-slate-400 p-2">該篩選條件下目前無任何旅員。</div>
                         </div>
@@ -622,7 +615,7 @@
                                 <h4 class="font-black text-slate-800 text-sm">
                                     <i class="fa-solid fa-chart-pie text-emerald-600"></i> 個體成員借還紀錄狀態分析
                                 </h4>
-                                <span v-if="selectedMemberStats" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full">當前鎖定：{{ selectedMemberStats.class }} - {{ selectedMemberStats.studentId ? '#' + selectedMemberStats.studentId : '' }} {{ selectedMemberStats.name }}</span>
+                                <span v-if="selectedMemberStats" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full">當前鎖定：{{ selectedMemberStats.class }} - {{ selectedMemberStats.name }}</span>
                             </div>
                             <div class="relative w-full sm:w-64">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -679,7 +672,7 @@
                             <h3 class="font-black text-slate-800 flex items-center gap-1.5 text-base">
                                 <i class="fa-solid fa-file-excel text-emerald-600"></i> Excel .xlsx 智慧批次快速同步導入
                             </h3>
-                            <p class="text-xs text-slate-400">支持導入包含「班級、姓名、學號(選填)」的隊員名冊，自動實時同步到 Firebase！</p>
+                            <p class="text-xs text-slate-400">支持導入包含「班級、姓名」的隊員名單，或包含「物資編號、物資名稱」的物資清單，匯入後自動實時同步到 Firebase！</p>
                             <input type="file" @change="importExcel" accept=".xlsx, .xls" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer" />
                         </div>
 
@@ -874,12 +867,13 @@
         </footer>
     </div>
 
-    <!-- Vue 3 核心驅動大腦 -->
+    <!-- Vue 3 核心大腦 -->
     <script>
         const { createApp, ref, reactive, computed, onMounted, watch } = Vue;
 
         createApp({
             setup() {
+                // 🚀 初始化狀態，嚴格將 currentRole 預設為 'guest'（訪客登入介面）
                 const currentRole = ref('guest');
                 const loginTab = ref('student');
                 const isSyncing = ref(false);
@@ -906,10 +900,10 @@
                 let db = null;
 
                 const adminLogin = reactive({ username: '', password: '' });
-                const studentLogin = reactive({ class: '', selectedName: '', customClass: '', customStudentId: '', customName: '' });
+                const studentLogin = reactive({ class: '', selectedName: '', customClass: '', customName: '' });
                 const activeStudent = ref({ class: '', name: '' });
                 
-                const newStudent = reactive({ class: '', studentId: '', name: '' });
+                const newStudent = reactive({ class: '', name: '' });
                 const studentApp = reactive({ type: 'loan', itemId: '', itemName: '', quantity: 1, expectedReturnDate: '', unit: '個' });
                 const exportFilter = reactive({ startDate: '2026-05-01', endDate: '2026-05-31' });
 
@@ -922,7 +916,7 @@
                     '6A', '6B', '6C', '6D'
                 ];
 
-                // 核心數據
+                // 核心數據 (一開檔為空白，預設測試成員已刪除)
                 const catalog = ref(JSON.parse(localStorage.getItem('scout_catalog')) || []);
                 const purchases = ref(JSON.parse(localStorage.getItem('scout_purchases')) || []);
                 const consumption = ref(JSON.parse(localStorage.getItem('scout_consumption')) || []);
@@ -941,7 +935,7 @@
                 // ==================== Firebase 連線與實時同步 ====================
                 const initFirebase = () => {
                     if (!firebaseConfig.databaseURL) {
-                        console.warn("Firebase Database URL 未設定。");
+                        console.warn("Firebase Database URL 未設定。請確認連線參數。");
                         return;
                     }
                     try {
@@ -970,37 +964,37 @@
                 const setupFirebaseListeners = () => {
                     if (!db) return;
 
-                    // 1. 監聽目錄
+                    // 1. 監聽目錄 (Catalog)
                     db.ref('catalog').on('value', (snapshot) => {
                         const val = snapshot.val();
                         catalog.value = val ? Object.values(val) : [];
                     });
 
-                    // 2. 監聽入庫明細
+                    // 2. 監聽採購入庫 (Purchases)
                     db.ref('purchases').on('value', (snapshot) => {
                         const val = snapshot.val();
                         purchases.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 3. 監聽出庫消耗
+                    // 3. 監聽出庫消耗 (Consumption)
                     db.ref('consumption').on('value', (snapshot) => {
                         const val = snapshot.val();
                         consumption.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 4. 監聽裝備借還
+                    // 4. 監聽裝備借還 (Loans)
                     db.ref('loans').on('value', (snapshot) => {
                         const val = snapshot.val();
                         loans.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 5. 監聽審核申請
+                    // 5. 監聽審核申請 (Applications)
                     db.ref('applications').on('value', (snapshot) => {
                         const val = snapshot.val();
                         applications.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 6. 監聽成員名冊
+                    // 6. 監聽成員名冊 (Students)
                     db.ref('students').on('value', (snapshot) => {
                         const val = snapshot.val();
                         students.value = val ? Object.values(val) : [];
@@ -1042,7 +1036,7 @@
                 // ==================== Google Sheets 備份機制 ====================
                 const syncToGoogleSheetBackup = async () => {
                     if (!googleSheetConfig.apiUrl) {
-                        Swal.fire("未設置", "請先設定 Google Apps Script Web App API 網址！", "warning");
+                        Swal.fire("未設置", "請先設定 Google Apps Script API 網址！", "warning");
                         return;
                     }
                     isSyncing.value = true;
@@ -1076,12 +1070,15 @@
                     }
                 };
 
+                onMounted(() => {
+                    initFirebase();
+                });
+
                 // ==================== 基礎運算公式 ====================
                 const totalExpenditure = computed(() => {
                     return purchases.value.reduce((sum, curr) => sum + ((curr.price || 0) * curr.quantity), 0);
                 });
 
-                // 🌟 核心升級：先按班別排序，同班級內再嚴謹按照「學號學籍號碼」升序（1 ➡️ 9 ➡️ 15 ➡️ 20）自動嚴格排列！
                 const sortedStudents = computed(() => {
                     return [...students.value].sort((a, b) => {
                         const idxA = standardClasses.indexOf(a.class);
@@ -1096,11 +1093,7 @@
                             const cmp = a.class.localeCompare(b.class, 'zh-Hant');
                             if (cmp !== 0) return cmp;
                         }
-                        
-                        // 當班別相同時，按學號（studentId）數值/字母自然排序
-                        const idA = String(a.studentId || '');
-                        const idB = String(b.studentId || '');
-                        return idA.localeCompare(idB, undefined, { numeric: true, sensitivity: 'base' });
+                        return a.name.localeCompare(b.name, 'zh-Hant');
                     });
                 });
 
@@ -1162,7 +1155,7 @@
                         const returnedLoans = personalLoans.filter(l => l.status === 'returned').length;
                         const overdueLoans = personalLoans.filter(l => l.status === 'borrowed' && isOverdue(l.expectedReturnDate)).length;
                         
-                        return { class: student.class, name: student.name, studentId: student.studentId, totalLoans, activeLoans, returnedLoans, overdueLoans };
+                        return { class: student.class, name: student.name, totalLoans, activeLoans, returnedLoans, overdueLoans };
                     });
                 });
 
@@ -1243,29 +1236,16 @@
 
                 const handleStudentLogin = () => {
                     let cls = studentLogin.class || studentLogin.customClass;
-                    let name = studentLogin.customName;
-                    let studentId = studentLogin.customStudentId;
-                    
-                    if (!studentLogin.class) {
-                        // 手動輸入
-                        if (!cls || !name) { Swal.fire('提示', '請選取或手動輸入隊員班別與姓名！', 'warning'); return; }
-                    } else {
-                        // 下拉選擇
-                        const matchedS = students.value.find(s => s.name === studentLogin.selectedName && s.class === cls);
-                        if (matchedS) {
-                            name = matchedS.name;
-                            studentId = matchedS.studentId;
-                        }
-                    }
-
+                    let name = studentLogin.selectedName || studentLogin.customName;
+                    if (!cls || !name) { Swal.fire('提示', '請選取或手動輸入隊員身分！', 'warning'); return; }
                     if (studentLogin.customClass && studentLogin.customName) {
-                        if (!students.value.some(s => s.name === name && s.class === cls)) {
-                            const newS = { class: cls, name: name, studentId: studentId };
+                        if (!students.value.some(s => s.name === name)) {
+                            const newS = { class: cls, name };
                             students.value.push(newS);
                             writeToFirebase('students', `${cls}_${name}`, newS);
                         }
                     }
-                    activeStudent.value = { class: cls, name: name, studentId: studentId };
+                    activeStudent.value = { class: cls, name };
                     currentRole.value = 'student';
                     showToast(`歡迎回來，${name} 同學`, 'success');
                 };
@@ -1281,13 +1261,14 @@
                         selectedMemberStats.value = null;
                         return;
                     }
-                    const matched = students.value.find(s => s.name.toLowerCase().includes(query) || (s.studentId && s.studentId.toLowerCase().includes(query)));
+                    const matched = students.value.find(s => s.name.toLowerCase().includes(query));
                     if (matched) {
                         selectedMemberStats.value = matched;
                     }
                 };
 
                 // ==================== 快速登記與編輯 (對接 Firebase) ====================
+                // 採購入庫功能：原「輸入單價」改為「輸入購入總金額」
                 const openQuickInModal = () => {
                     let opt = catalog.value.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                     Swal.fire({
@@ -1410,7 +1391,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-slate-500 font-bold mb-1">3. 借出對象姓名 (例: 5A 黃俊傑)</label>
+                                    <label class="block text-slate-500 font-bold mb-1">3. 借出對象姓名</label>
                                     <input id="swal-l-user" placeholder="例如：5A 黃俊傑" class="swal2-input !m-0 !w-full" style="height:38px;">
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
@@ -1443,7 +1424,7 @@
                                 }
                                 buttonsDiv.innerHTML = filtered.map(s => `
                                     <button type="button" class="swal-std-btn bg-emerald-100 hover:bg-emerald-200 text-emerald-900 px-2.5 py-1 rounded-lg text-[11px] font-black transition active:scale-95" data-name="${s.name}" data-class="${s.class}">
-                                        ${s.studentId ? '#' + s.studentId + ' ' : ''}${s.name}
+                                        ${s.name}
                                     </button>
                                 `).join('');
 
@@ -1530,7 +1511,7 @@
                                 }
                                 buttonsDiv.innerHTML = filtered.map(s => `
                                     <button type="button" class="swal-out-btn bg-rose-100 hover:bg-rose-200 text-rose-900 px-2.5 py-1 rounded-lg text-[11px] font-black transition active:scale-95" data-name="${s.name}" data-class="${s.class}">
-                                        ${s.studentId ? '#' + s.studentId + ' ' : ''}${s.name}
+                                        ${s.name}
                                     </button>
                                 `).join('');
 
@@ -1613,15 +1594,14 @@
                         Swal.fire('重複成員', '此旅員已在名冊中。', 'warning');
                         return;
                     }
-                    const newS = { class: newStudent.class, studentId: newStudent.studentId.trim(), name: newStudent.name.trim() };
+                    const newS = { class: newStudent.class, name: newStudent.name.trim() };
                     writeToFirebase('students', key, newS);
                     newStudent.class = ''; 
-                    newStudent.studentId = '';
                     newStudent.name = '';
                     showToast('新成員名冊錄入成功', 'success');
                 };
 
-                // ✏️ 升班/資料自由修改視窗（Firebase 實時連動，支援學號修改與跨字母升班！）
+                // ✏️ 升班/資料自由修改視窗（Firebase 實時連動，支援任意跨字母升班！）
                 const openEditStudentModal = (studentObj) => {
                     let classOptions = standardClasses.map(c => `
                         <option value="${c}" ${studentObj.class === c ? 'selected' : ''}>${c}</option>
@@ -1632,14 +1612,10 @@
                         html: `
                             <div class="text-left text-xs space-y-3 p-1">
                                 <div>
-                                    <label class="block text-slate-500 font-bold mb-1">班級 (升班可任意跨字母挑選)</label>
+                                    <label class="block text-slate-500 font-bold mb-1">班級 (升班可任意跨字母挑選，如 1A ➡️ 2D)</label>
                                     <select id="edit-std-class" class="swal2-input !m-0 !w-full" style="height:38px; padding-left:6px;">
                                         ${classOptions}
                                     </select>
-                                </div>
-                                <div>
-                                    <label class="block text-slate-500 font-bold mb-1">學號 (Student ID)</label>
-                                    <input id="edit-std-id" value="${studentObj.studentId || ''}" class="swal2-input !m-0 !w-full" style="height:38px;">
                                 </div>
                                 <div>
                                     <label class="block text-slate-500 font-bold mb-1">成員姓名</label>
@@ -1652,17 +1628,16 @@
                         cancelButtonText: '取消',
                         preConfirm: () => ({
                             newClass: document.getElementById('edit-std-class').value,
-                            newStudentId: document.getElementById('edit-std-id').value.trim(),
                             newName: document.getElementById('edit-std-name').value.trim()
                         })
                     }).then((res) => {
                         if (res.isConfirmed && res.value.newName) {
                             const v = res.value;
-                            // 1. 舊 Key 移除
+                            // 1. 舊 Key 除名
                             deleteFromFirebase('students', `${studentObj.class}_${studentObj.name}`);
                             
-                            // 2. 寫入新 Key
-                            const updatedS = { class: v.newClass, studentId: v.newStudentId, name: v.newName };
+                            // 2. 寫入新 Key 
+                            const updatedS = { class: v.newClass, name: v.newName };
                             writeToFirebase('students', `${v.newClass}_${v.newName}`, updatedS);
                             
                             showToast('成員升班/資料更新完成！', 'success');
@@ -2007,10 +1982,8 @@
                 const saveApiUrlToLocal = () => localStorage.setItem('ccss_sheet_api', googleSheetConfig.apiUrl);
                 const saveSheetUrlToLocal = () => localStorage.setItem('ccss_sheet_url', googleSheetConfig.sheetUrl);
 
-                // 🌟 新版：位置智慧排序匹配
-                // 列 1 = 班級 (keys[0])
-                // 列 2 = 姓名 (keys[1])
-                // 列 3 = 學號 (keys[2]) -> 新增自適應支持！
+                // 🌟 新版：智慧位置排序讀取（Position-based Mapping）
+                // 排除英文或中文字頭不合對不上的 Bug，最左邊的第一直行一律自動辨識為班級，緊鄰右邊的第二直行一律辨識為姓名！
                 const importExcel = (event) => {
                     const file = event.target.files[0];
                     if (!file) return;
@@ -2030,25 +2003,22 @@
                             const firstRow = jsonData[0];
                             const keys = Object.keys(firstRow);
                             
-                            // 判斷：名冊導入 (至少包含第一列：班別、第二列：姓名/名單)
+                            // 判斷：如果是名單匯入（只要大於等於 2 列就優先採取『左邊班級，右邊姓名』的智慧位置排序匹配）
                             if (keys.length >= 2 && (keys[0].includes('班') || keys[1].includes('名') || keys[1].includes('姓') || firstRow[keys[0]].toString().match(/[1-6][A-D]/i))) {
                                 let cnt = 0;
                                 jsonData.forEach(row => {
                                     const cls = String(row[keys[0]] || '1A').trim().toUpperCase();
                                     const name = String(row[keys[1]] || '').trim();
-                                    // 自適應第三列，如果存在就讀取為學號，否則留空
-                                    const studentId = keys[2] ? String(row[keys[2]] || '').trim() : '';
-
                                     if (name && !students.value.some(s => s.name === name && s.class === cls)) {
-                                        const nS = { class: cls, name: name, studentId: studentId };
+                                        const nS = { class: cls, name: name };
                                         students.value.push(nS);
                                         writeToFirebase('students', `${cls}_${name}`, nS);
                                         cnt++;
                                     }
                                 });
-                                importMessage.value = `👥 成功智慧匹配並匯入 ${cnt} 名成員（含學號欄位），已自動實時廣播！`;
+                                importMessage.value = `👥 成功智慧位置匹配並匯入 ${cnt} 名成員，已實時廣播到所有裝置！`;
                             } 
-                            // 判斷：物資導入
+                            // 判斷：如果是物資基本定義
                             else if (firstRow.hasOwnProperty('物資編號') || firstRow.hasOwnProperty('物資名稱') || keys[0].includes('編號') || keys[1].includes('名稱')) {
                                 let cnt = 0;
                                 jsonData.forEach(row => {
@@ -2068,10 +2038,10 @@
                                 });
                                 importMessage.value = `📊 成功批次匯入 ${cnt} 項物資定義，已實時廣播到所有裝置！`;
                             } else {
-                                Swal.fire('導入失敗', '無法辨識您的 Excel 結構。', 'warning');
+                                Swal.fire('導入失敗', '無法辨識您的 Excel 結構。請確保左側第一行是同學班別，右側第二行是姓名。', 'warning');
                             }
                         } catch (err) {
-                            Swal.fire('讀取失敗', '不合規的 Excel 結構。', 'error');
+                            Swal.fire('讀取失敗', '不合規的 Excel 結構體。', 'error');
                         }
                     };
                     reader.readAsArrayBuffer(file);
