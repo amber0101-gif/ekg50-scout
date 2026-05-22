@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>香港道教聯合會青松中學 EKG50 童軍物資管理系統 (雙雲端智慧適配版)</title>
+    <title>香港道教聯合會青松中學 EKG50 童軍物資管理系統 (雙雲端終極版)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Vue 3 (Composition API) -->
@@ -94,7 +94,7 @@
                     <div class="bg-emerald-900/90 px-3 py-1.5 rounded-xl border border-emerald-800 text-xs sm:text-sm flex items-center gap-1.5 shadow-inner">
                         <i class="fa-solid fa-circle-user text-amber-400 text-xs"></i>
                         <span class="font-bold text-amber-300 text-xs sm:text-sm">
-                            {{ currentRole === 'admin' ? '老師管理員' : (currentRole === 'student' ? `${activeStudent.class}班 [${activeStudent.studentId}號] ${activeStudent.name}` : '未登入') }}
+                            {{ currentRole === 'admin' ? '老師管理員' : (currentRole === 'student' ? `[${activeStudent.class}] ${activeStudent.name}` : '未登入') }}
                         </span>
                     </div>
 
@@ -170,7 +170,7 @@
                             <label class="block text-xs font-bold text-slate-600 mb-1.5">2. 選擇姓名</label>
                             <select v-model="studentLogin.selectedName" class="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 text-sm" :disabled="!studentLogin.class">
                                 <option value="">-- 請選擇名字 --</option>
-                                <option v-for="s in filteredStudentList" :key="s.name" :value="s.name">學號 {{ s.studentId || '--' }} 號 - {{ s.name }}</option>
+                                <option v-for="s in filteredStudentList" :key="s.name" :value="s.name">{{ s.studentId ? '[' + s.studentId + '] ' : '' }}{{ s.name }}</option>
                             </select>
                         </div>
                         <div class="relative flex py-2 items-center">
@@ -179,8 +179,8 @@
                             <div class="flex-grow border-t border-slate-200"></div>
                         </div>
                         <div class="grid grid-cols-3 gap-2">
-                            <input v-model="studentLogin.customClass" placeholder="班別(例: 2B)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-                            <input v-model="studentLogin.customStudentId" placeholder="學號(1-40)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                            <input v-model="studentLogin.customClass" placeholder="班別(例:5A)" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                            <input v-model="studentLogin.customStudentId" placeholder="輸入學號" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                             <input v-model="studentLogin.customName" placeholder="旅員姓名" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                         </div>
                         <button @click="handleStudentLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm active:scale-95">
@@ -308,9 +308,9 @@
                         </div>
                     </div>
 
-                    <!-- 裝備租借實時監控明細 -->
+                    <!-- 裝備租借實時監控 -->
                     <div id="loansTableSection" class="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-xl space-y-4">
-                        <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-2">
+                        <div class="flex flex-wrap justify-between items-center gap-3">
                             <h3 class="text-base sm:text-lg font-black text-slate-800"><i class="fa-solid fa-rotate-left text-amber-500"></i> 物資借出與歸還監控明細流</h3>
                             <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-xs">
                                 <button @click="loanFilter = 'all'" :class="['px-3 py-1 rounded-lg font-black', loanFilter === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500']">全部</button>
@@ -358,7 +358,7 @@
                         </div>
                     </div>
 
-                    <!-- 實時小隊成員租借活躍指標統計 -->
+                    <!-- 實時小隊成員租借活躍統計 -->
                     <div class="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-xl space-y-4 animate-fadeIn">
                         <div class="flex items-center justify-between border-b pb-2">
                             <h3 class="text-base sm:text-lg font-black text-slate-800"><i class="fa-solid fa-chart-line text-emerald-600 mr-1"></i> 📊 小隊全體旅員租借歷史活躍指標統計</h3>
@@ -528,6 +528,9 @@
                                         <button @click="deleteLoanItem(loan.id)" class="text-xs text-rose-600 hover:text-rose-800 font-bold"><i class="fa-solid fa-trash-can"></i></button>
                                     </td>
                                 </tr>
+                                <tr v-if="filteredLoans.length === 0">
+                                    <td colspan="6" class="p-6 text-center text-slate-400 text-xs">目前沒有任何固定裝備借還紀錄。</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -588,7 +591,7 @@
                                 <option value="">選擇班級</option>
                                 <option v-for="cls in standardClasses" :key="cls" :value="cls">{{ cls }}</option>
                             </select>
-                            <input v-model="newStudent.studentId" placeholder="輸入學號 (例: 12)" class="p-2 border border-slate-200 rounded-xl text-xs w-[25%] outline-none bg-white" />
+                            <input v-model="newStudent.studentId" placeholder="輸入學號 (例: 21005)" class="p-2 border border-slate-200 rounded-xl text-xs w-[25%] outline-none bg-white" />
                             <input v-model="newStudent.name" placeholder="輸入旅員姓名" class="p-2 border border-slate-200 rounded-xl text-xs w-[28%] outline-none bg-white" />
                             <button @click="addNewStudent" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shrink-0 transition shadow-sm">
                                 <i class="fa-solid fa-user-plus mr-1"></i>新增
@@ -600,8 +603,8 @@
                                  @click="selectedMemberStats = std" 
                                  :class="['px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 border transition cursor-pointer font-bold shadow-sm', 
                                           selectedMemberStats && selectedMemberStats.name === std.name && selectedMemberStats.class === std.class ? 'bg-emerald-950 border-emerald-950 text-white shadow' : 'bg-slate-50 hover:bg-slate-100 text-slate-700']">
-                                <span>{{ std.class }}</span>
-                                <span class="text-emerald-700" v-if="std.studentId">[{{ std.studentId }}號]</span>
+                                <span>[{{ std.class }}]</span>
+                                <span class="text-emerald-700" v-if="std.studentId">#{{ std.studentId }}</span>
                                 <span>{{ std.name }}</span>
                                 <!-- ✏️ 升班與資訊編輯按鈕 -->
                                 <button @click.stop="openEditStudentModal(std)" class="text-slate-400 hover:text-emerald-600 ml-1.5" title="編輯班級或改名"><i class="fa-solid fa-user-pen text-[10px]"></i></button>
@@ -619,7 +622,7 @@
                                 <h4 class="font-black text-slate-800 text-sm">
                                     <i class="fa-solid fa-chart-pie text-emerald-600"></i> 個體成員借還紀錄狀態分析
                                 </h4>
-                                <span v-if="selectedMemberStats" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full">當前鎖定：{{ selectedMemberStats.class }}班 {{ selectedMemberStats.studentId ? '[' + selectedMemberStats.studentId + '號] ' : '' }}{{ selectedMemberStats.name }}</span>
+                                <span v-if="selectedMemberStats" class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-0.5 rounded-full">當前鎖定：{{ selectedMemberStats.class }} - {{ selectedMemberStats.studentId ? '#' + selectedMemberStats.studentId : '' }} {{ selectedMemberStats.name }}</span>
                             </div>
                             <div class="relative w-full sm:w-64">
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
@@ -674,9 +677,9 @@
                         <!-- xlsx 智慧導入 -->
                         <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl space-y-4">
                             <h3 class="font-black text-slate-800 flex items-center gap-1.5 text-base">
-                                <i class="fa-solid fa-file-excel text-emerald-600"></i> Excel .xlsx 智慧判別與適配快速同步導入
+                                <i class="fa-solid fa-file-excel text-emerald-600"></i> Excel .xlsx 智慧批次快速同步導入
                             </h3>
-                            <p class="text-xs text-slate-400">支持導入包含「班別(1A-6D)、姓名、學號(1-40)」的隊員名單。**欄位順序不限**，系統會透過 AI Heuristics 智慧辨識行頭與內容特徵並歸類，自動實時同步到 Firebase！</p>
+                            <p class="text-xs text-slate-400">支持導入包含「班級、姓名、學號(選填)」的隊員名冊，自動實時同步到 Firebase！</p>
                             <input type="file" @change="importExcel" accept=".xlsx, .xls" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer" />
                         </div>
 
@@ -755,7 +758,7 @@
             <div v-if="currentRole === 'student'" class="space-y-8 animate-fadeIn">
                 <div class="bg-gradient-to-r from-emerald-950 to-teal-800 p-6 rounded-3xl text-white shadow-md flex justify-between items-center">
                     <div>
-                        <h2 class="text-lg sm:text-xl font-black text-amber-300">你好，{{ activeStudent.class }}班 [{{ activeStudent.studentId }}號] {{ activeStudent.name }} 同學！</h2>
+                        <h2 class="text-lg sm:text-xl font-black text-amber-300">你好，{{ activeStudent.class }} - {{ activeStudent.name }} 同學！</h2>
                         <p class="text-xs text-emerald-200 mt-1 font-light">小隊個人申領面板：可在此提交「裝備借用」或「消耗品領用」表單並追蹤審批。</p>
                     </div>
                     <div class="flex gap-3 text-center text-xs">
@@ -877,7 +880,6 @@
 
         createApp({
             setup() {
-                // 🚀 初始化狀態，嚴格將 currentRole 預設為 'guest'（訪客登入介面）
                 const currentRole = ref('guest');
                 const loginTab = ref('student');
                 const isSyncing = ref(false);
@@ -894,7 +896,7 @@
                     sheetUrl: localStorage.getItem('ccss_sheet_url') || ""
                 });
 
-                // 🔥 Firebase 連線配置已寫死
+                // 🔥 Firebase 連線配置
                 const firebaseConfig = reactive({
                     apiKey: "AIzaSyBVsCM3HxQdwc0dBSy85QNfQtO_ub0E8uI",
                     databaseURL: "https://ekg50-scout-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -905,7 +907,7 @@
 
                 const adminLogin = reactive({ username: '', password: '' });
                 const studentLogin = reactive({ class: '', selectedName: '', customClass: '', customStudentId: '', customName: '' });
-                const activeStudent = ref({ class: '', name: '', studentId: '' });
+                const activeStudent = ref({ class: '', name: '' });
                 
                 const newStudent = reactive({ class: '', studentId: '', name: '' });
                 const studentApp = reactive({ type: 'loan', itemId: '', itemName: '', quantity: 1, expectedReturnDate: '', unit: '個' });
@@ -920,7 +922,7 @@
                     '6A', '6B', '6C', '6D'
                 ];
 
-                // 核心數據 (一開檔為空白，預設測試成員已刪除)
+                // 核心數據
                 const catalog = ref(JSON.parse(localStorage.getItem('scout_catalog')) || []);
                 const purchases = ref(JSON.parse(localStorage.getItem('scout_purchases')) || []);
                 const consumption = ref(JSON.parse(localStorage.getItem('scout_consumption')) || []);
@@ -939,7 +941,7 @@
                 // ==================== Firebase 連線與實時同步 ====================
                 const initFirebase = () => {
                     if (!firebaseConfig.databaseURL) {
-                        console.warn("Firebase Database URL 未設定。請確認連線參數。");
+                        console.warn("Firebase Database URL 未設定。");
                         return;
                     }
                     try {
@@ -968,37 +970,37 @@
                 const setupFirebaseListeners = () => {
                     if (!db) return;
 
-                    // 1. 監聽目錄 (Catalog)
+                    // 1. 監聽目錄
                     db.ref('catalog').on('value', (snapshot) => {
                         const val = snapshot.val();
                         catalog.value = val ? Object.values(val) : [];
                     });
 
-                    // 2. 監聽採購入庫 (Purchases)
+                    // 2. 監聽入庫明細
                     db.ref('purchases').on('value', (snapshot) => {
                         const val = snapshot.val();
                         purchases.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 3. 監聽出庫消耗 (Consumption)
+                    // 3. 監聽出庫消耗
                     db.ref('consumption').on('value', (snapshot) => {
                         const val = snapshot.val();
                         consumption.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 4. 監聽裝備借還 (Loans)
+                    // 4. 監聽裝備借還
                     db.ref('loans').on('value', (snapshot) => {
                         const val = snapshot.val();
                         loans.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 5. 監聽審核申請 (Applications)
+                    // 5. 監聽審核申請
                     db.ref('applications').on('value', (snapshot) => {
                         const val = snapshot.val();
                         applications.value = val ? Object.values(val).reverse() : [];
                     });
 
-                    // 6. 監聽成員名冊 (Students)
+                    // 6. 監聽成員名冊
                     db.ref('students').on('value', (snapshot) => {
                         const val = snapshot.val();
                         students.value = val ? Object.values(val) : [];
@@ -1040,7 +1042,7 @@
                 // ==================== Google Sheets 備份機制 ====================
                 const syncToGoogleSheetBackup = async () => {
                     if (!googleSheetConfig.apiUrl) {
-                        Swal.fire("未設置", "請先設定 Google Apps Script API 網址！", "warning");
+                        Swal.fire("未設置", "請先設定 Google Apps Script Web App API 網址！", "warning");
                         return;
                     }
                     isSyncing.value = true;
@@ -1079,7 +1081,7 @@
                     return purchases.value.reduce((sum, curr) => sum + ((curr.price || 0) * curr.quantity), 0);
                 });
 
-                // 🌟 核心排序：班級遞增排序（1A-6D），同班級內完美按照學號數值從小到大（1 ➡️ 40）自動排列！
+                // 🌟 核心升級：先按班別排序，同班級內再嚴謹按照「學號學籍號碼」升序（1 ➡️ 9 ➡️ 15 ➡️ 20）自動嚴格排列！
                 const sortedStudents = computed(() => {
                     return [...students.value].sort((a, b) => {
                         const idxA = standardClasses.indexOf(a.class);
@@ -1619,7 +1621,7 @@
                     showToast('新成員名冊錄入成功', 'success');
                 };
 
-                // ✏️ 升班/資料自由修改視窗（Firebase 實時連動，支援學號與任意跨字母升班！）
+                // ✏️ 升班/資料自由修改視窗（Firebase 實時連動，支援學號修改與跨字母升班！）
                 const openEditStudentModal = (studentObj) => {
                     let classOptions = standardClasses.map(c => `
                         <option value="${c}" ${studentObj.class === c ? 'selected' : ''}>${c}</option>
@@ -1636,7 +1638,7 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-slate-500 font-bold mb-1">學號 (Student ID, 1-40)</label>
+                                    <label class="block text-slate-500 font-bold mb-1">學號 (Student ID)</label>
                                     <input id="edit-std-id" value="${studentObj.studentId || ''}" class="swal2-input !m-0 !w-full" style="height:38px;">
                                 </div>
                                 <div>
@@ -2005,7 +2007,10 @@
                 const saveApiUrlToLocal = () => localStorage.setItem('ccss_sheet_api', googleSheetConfig.apiUrl);
                 const saveSheetUrlToLocal = () => localStorage.setItem('ccss_sheet_url', googleSheetConfig.sheetUrl);
 
-                // 🌟 新版：智慧特徵掃描 (自動分辨 姓名、班別、學號)
+                // 🌟 新版：位置智慧排序匹配
+                // 列 1 = 班級 (keys[0])
+                // 列 2 = 姓名 (keys[1])
+                // 列 3 = 學號 (keys[2]) -> 新增自適應支持！
                 const importExcel = (event) => {
                     const file = event.target.files[0];
                     if (!file) return;
@@ -2025,51 +2030,14 @@
                             const firstRow = jsonData[0];
                             const keys = Object.keys(firstRow);
                             
-                            // 判斷是否為名單匯入 (至少包含 2 列)
-                            if (keys.length >= 2 && (keys[0].includes('班') || keys[1].includes('名') || keys[1].includes('姓') || keys[1].includes('號') || firstRow[keys[0]].toString().match(/[1-6][A-D]/i))) {
-                                
-                                // 🤖 智慧欄位特徵分類器 (Smart Row Classifier)
-                                let classKey = null;
-                                let nameKey = null;
-                                let studentIdKey = null;
-
-                                keys.forEach(key => {
-                                    let classMatchCount = 0;
-                                    let idMatchCount = 0;
-                                    let nameMatchCount = 0;
-                                    let sampleSize = Math.min(jsonData.length, 10);
-
-                                    for (let i = 0; i < sampleSize; i++) {
-                                        const val = String(jsonData[i][key] || '').trim();
-                                        if (val.match(/^[1-6][A-D]$/i)) {
-                                            classMatchCount++;
-                                        } else if (val.match(/^\d+$/) && parseInt(val) >= 1 && parseInt(val) <= 40) {
-                                            idMatchCount++;
-                                        } else if (val !== "") {
-                                            nameMatchCount++;
-                                        }
-                                    }
-
-                                    // 給各個欄位屬性打分匹配
-                                    if (key.includes('班') || classMatchCount > sampleSize * 0.4) {
-                                        classKey = key;
-                                    } else if (key.includes('號') || key.includes('學號') || key.includes('ID') || idMatchCount > sampleSize * 0.4) {
-                                        studentIdKey = key;
-                                    } else if (key.includes('名') || key.includes('姓') || nameMatchCount > sampleSize * 0.4) {
-                                        nameKey = key;
-                                    }
-                                });
-
-                                // 後備方案 (如果沒檢測到，按最常見順序：第一個是班級，第二個是姓名，第三個是學號)
-                                if (!classKey) classKey = keys[0];
-                                if (!nameKey) nameKey = keys[1];
-                                if (!studentIdKey) studentIdKey = keys[2] || '';
-
+                            // 判斷：名冊導入 (至少包含第一列：班別、第二列：姓名/名單)
+                            if (keys.length >= 2 && (keys[0].includes('班') || keys[1].includes('名') || keys[1].includes('姓') || firstRow[keys[0]].toString().match(/[1-6][A-D]/i))) {
                                 let cnt = 0;
                                 jsonData.forEach(row => {
-                                    const cls = String(row[classKey] || '1A').trim().toUpperCase();
-                                    const name = String(row[nameKey] || '').trim();
-                                    const studentId = studentIdKey ? String(row[studentIdKey] || '').trim() : '';
+                                    const cls = String(row[keys[0]] || '1A').trim().toUpperCase();
+                                    const name = String(row[keys[1]] || '').trim();
+                                    // 自適應第三列，如果存在就讀取為學號，否則留空
+                                    const studentId = keys[2] ? String(row[keys[2]] || '').trim() : '';
 
                                     if (name && !students.value.some(s => s.name === name && s.class === cls)) {
                                         const nS = { class: cls, name: name, studentId: studentId };
@@ -2078,10 +2046,10 @@
                                         cnt++;
                                     }
                                 });
-                                importMessage.value = `👥 智慧特徵識別成功！已從 Excel 匯入 ${cnt} 名成員（班別、姓名、學號皆自動歸類），並實時更新！`;
+                                importMessage.value = `👥 成功智慧匹配並匯入 ${cnt} 名成員（含學號欄位），已自動實時廣播！`;
                             } 
-                            // 判斷是否為物資目錄匯入
-                            else if (firstRow.hasOwnProperty('物資編號') || firstRow.hasOwnProperty('物資名稱')) {
+                            // 判斷：物資導入
+                            else if (firstRow.hasOwnProperty('物資編號') || firstRow.hasOwnProperty('物資名稱') || keys[0].includes('編號') || keys[1].includes('名稱')) {
                                 let cnt = 0;
                                 jsonData.forEach(row => {
                                     const id = String(row[keys[0]] || '').trim().toUpperCase();
@@ -2100,10 +2068,10 @@
                                 });
                                 importMessage.value = `📊 成功批次匯入 ${cnt} 項物資定義，已實時廣播到所有裝置！`;
                             } else {
-                                Swal.fire('導入失敗', '無法識別 Excel 欄位特徵，請確保檔案包含班別、姓名、學號資訊！', 'warning');
+                                Swal.fire('導入失敗', '無法辨識您的 Excel 結構。', 'warning');
                             }
                         } catch (err) {
-                            Swal.fire('讀取失敗', '不合規的 Excel 結構體。', 'error');
+                            Swal.fire('讀取失敗', '不合規的 Excel 結構。', 'error');
                         }
                     };
                     reader.readAsArrayBuffer(file);
