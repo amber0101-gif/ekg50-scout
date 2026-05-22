@@ -528,6 +528,9 @@
                                         <button @click="deleteLoanItem(loan.id)" class="text-xs text-rose-600 hover:text-rose-800 font-bold"><i class="fa-solid fa-trash-can"></i></button>
                                     </td>
                                 </tr>
+                                <tr v-if="filteredLoans.length === 0">
+                                    <td colspan="6" class="p-6 text-center text-slate-400 text-xs">目前沒有任何固定裝備借還紀錄。</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -603,10 +606,10 @@
                                 <span>{{ std.class }}</span>
                                 <span class="text-emerald-700" v-if="std.studentId">[{{ std.studentId }}號]</span>
                                 <span>{{ std.name }}</span>
-                                <!-- ✏️ 成員資訊編輯按鈕 -->
+                                <!-- ✏️ 升班與編輯 -->
                                 <button @click.stop="openEditStudentModal(std)" class="text-slate-400 hover:text-emerald-600 ml-1.5" title="編輯班級或改名"><i class="fa-solid fa-user-pen text-[10px]"></i></button>
-                                <!-- ✕ 除名按鈕 -->
-                                <button @click.stop="removeStudent(std)" class="text-slate-400 hover:text-rose-500 ml-1.5" title="移出名冊(不刪除歷史明細)"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                                <!-- ✕ 除名 -->
+                                <button @click.stop="removeStudent(std)" class="text-slate-400 hover:text-rose-500 ml-1.5" title="移出名冊(保留歷史明細)"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                             </div>
                             <div v-if="filteredMembersList.length === 0" class="text-xs text-slate-400 p-2">該篩選條件下目前無任何成員。</div>
                         </div>
@@ -765,7 +768,7 @@
                 </div>
 
                 <div class="bg-white rounded-3xl border p-6 shadow space-y-4">
-                    <h3 class="font-black text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-suitcase text-emerald-600"></i> 我目前名下登記借用中的非消耗裝備</h3>
+                    <h3 class="font-black text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-suitcase text-emerald-600"></i> 我目前名下登記借用中的裝備</h3>
                     <div v-if="myBorrowedItems.length === 0" class="text-center py-8 text-slate-400 border border-dashed rounded-xl bg-slate-50/20 text-xs font-bold">目前您手上沒有未歸還的裝備物品。</div>
                     <div class="overflow-x-auto border border-slate-100 rounded-xl text-xs sm:text-sm custom-scrollbar" v-else>
                         <table class="w-full text-left border-collapse min-w-[500px]">
@@ -871,7 +874,7 @@
         </footer>
     </div>
 
-    <!-- Vue 3 核心驅動大腦 -->
+    <!-- Vue 3 核心大腦 -->
     <script>
         const { createApp, ref, reactive, computed, onMounted, watch } = Vue;
 
@@ -921,7 +924,7 @@
                     '6A', '6B', '6C', '6D'
                 ];
 
-                // 核心數據 (預設測試成員已成功刪除)
+                // 核心數據
                 const catalog = ref(JSON.parse(localStorage.getItem('scout_catalog')) || []);
                 const purchases = ref(JSON.parse(localStorage.getItem('scout_purchases')) || []);
                 const consumption = ref(JSON.parse(localStorage.getItem('scout_consumption')) || []);
@@ -1077,7 +1080,7 @@
 
                 // ==================== 基礎運算公式 ====================
                 const totalExpenditure = computed(() => {
-                    return purchases.value.reduce((sum, curr) => sum + ((curr.price || 0) * curr.quantity), 0);
+                    return purchases.value.reduce((sum, curr) => sum + ((Number(curr.price || 0)) * Number(curr.quantity || 0)), 0);
                 });
 
                 // 🌟 核心排序：班級遞增排序（1A-6D），同班級內完美按照學號數值從小到大（1 ➡️ 40）自動排列！
@@ -1104,17 +1107,17 @@
                 });
 
                 const getAvailableStock = (itemId) => {
-                    const totalIn = purchases.value.filter(p => p.itemId === itemId).reduce((sum, curr) => sum + curr.quantity, 0);
-                    const totalOut = consumption.value.filter(c => c.itemId === itemId).reduce((sum, curr) => sum + curr.quantity, 0);
-                    const totalBorrowed = loans.value.filter(l => l.itemId === itemId && l.status === 'borrowed').reduce((sum, curr) => sum + curr.quantity, 0);
+                    const totalIn = purchases.value.filter(p => p.itemId === itemId).reduce((sum, curr) => sum + Number(curr.quantity || 0), 0);
+                    const totalOut = consumption.value.filter(c => c.itemId === itemId).reduce((sum, curr) => sum + Number(curr.quantity || 0), 0);
+                    const totalBorrowed = loans.value.filter(l => l.itemId === itemId && l.status === 'borrowed').reduce((sum, curr) => sum + Number(curr.quantity || 0), 0);
                     return Math.max(0, totalIn - totalOut - totalBorrowed);
                 };
 
                 const stockSummary = computed(() => {
                     return catalog.value.map(item => {
-                        const totalIn = purchases.value.filter(p => p.itemId === item.id).reduce((sum, curr) => sum + curr.quantity, 0);
-                        const totalOut = consumption.value.filter(c => c.itemId === item.id).reduce((sum, curr) => sum + curr.quantity, 0);
-                        const totalBorrowed = loans.value.filter(l => l.itemId === item.id && l.status === 'borrowed').reduce((sum, curr) => sum + curr.quantity, 0);
+                        const totalIn = purchases.value.filter(p => p.itemId === item.id).reduce((sum, curr) => sum + Number(curr.quantity || 0), 0);
+                        const totalOut = consumption.value.filter(c => c.itemId === item.id).reduce((sum, curr) => sum + Number(curr.quantity || 0), 0);
+                        const totalBorrowed = loans.value.filter(l => l.itemId === item.id && l.status === 'borrowed').reduce((sum, curr) => sum + Number(curr.quantity || 0), 0);
                         const available = totalIn - totalOut - totalBorrowed;
                         return {
                             id: item.id, name: item.name, type: item.type, unit: item.unit,
@@ -1147,7 +1150,7 @@
                         totalLoansCount: personalLoans.length,
                         borrowingCount: personalLoans.filter(l => l.status === 'borrowed').length,
                         overdueCount: personalLoans.filter(l => l.status === 'borrowed' && isOverdue(l.expectedReturnDate)).length,
-                        totalConsumeQty: personalConsumptions.reduce((sum, curr) => sum + curr.quantity, 0)
+                        totalConsumeQty: personalConsumptions.reduce((sum, curr) => sum + Number(curr.quantity || 0), 0)
                     };
                 });
 
@@ -1462,7 +1465,7 @@
                     }).then(res => {
                         if (res.isConfirmed && res.value.borrower && res.value.date) {
                             const v = res.value;
-                            if (getAvailableStock(v.itemId) < v.qty) { Swal.fire('無法借出', '物資可用數量不足！', 'error'); return; }
+                            if (getAvailableStock(v.itemId) < v.qty) { Swal.fire('無法借出', '營地可用數量不足！', 'error'); return; }
                             const match = catalog.value.find(c => c.id === v.itemId);
                             const lId = 'L' + Date.now().toString().slice(-4);
                             const newLoan = {
@@ -1484,7 +1487,7 @@
                         html: `
                             <div class="text-left text-xs space-y-3 p-1">
                                 <div>
-                                    <label class="block text-slate-500 font-bold mb-1">1. 選擇要核銷出庫的物資</label>
+                                    <label class="block text-slate-500 font-bold mb-1">1. 選擇要核銷出庫的資材</label>
                                     <select id="swal-o-id" class="swal2-input !m-0 !w-full" style="height:38px; padding-left: 6px;">${opt}</select>
                                 </div>
                                 <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-2">
@@ -1547,7 +1550,7 @@
                     }).then(res => {
                         if (res.isConfirmed && res.value.consumer) {
                             const v = res.value;
-                            if (getAvailableStock(v.itemId) < v.qty) { Swal.fire('核銷失敗', '物資可用餘額不足！', 'error'); return; }
+                            if (getAvailableStock(v.itemId) < v.qty) { Swal.fire('核銷失敗', '可用餘額不足！', 'error'); return; }
                             const match = catalog.value.find(c => c.id === v.itemId);
                             const cId = 'C' + Date.now().toString().slice(-4);
                             const newConsume = {
