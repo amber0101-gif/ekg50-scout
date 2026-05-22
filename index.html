@@ -766,7 +766,7 @@
 
                 <div class="bg-white rounded-3xl border p-6 shadow space-y-4">
                     <h3 class="font-black text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-suitcase text-emerald-600"></i> 我目前名下登記借用中的非消耗裝備</h3>
-                    <div v-if="myBorrowedItems.length === 0" class="text-center py-8 text-slate-400 border border-dashed rounded-xl bg-slate-50/20 text-xs font-bold">目前您手上沒有未歸還的營地裝備物品。</div>
+                    <div v-if="myBorrowedItems.length === 0" class="text-center py-8 text-slate-400 border border-dashed rounded-xl bg-slate-50/20 text-xs font-bold">目前您手上沒有未歸還的裝備物品。</div>
                     <div class="overflow-x-auto border border-slate-100 rounded-xl text-xs sm:text-sm custom-scrollbar" v-else>
                         <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
@@ -801,7 +801,7 @@
                                 <div class="flex gap-4"><label class="flex items-center gap-1 cursor-pointer font-black"><input type="radio" v-model="studentApp.type" value="loan" /> 長效裝備短期借用 (限非消耗品)</label><label class="flex items-center gap-1 cursor-pointer font-black"><input type="radio" v-model="studentApp.type" value="consume" /> 訓練物資領用 (限消耗品)</label></div>
                             </div>
                             <div>
-                                <label class="block font-bold text-slate-500 mb-1">2. 選擇營地物資</label>
+                                <label class="block font-bold text-slate-500 mb-1">2. 選擇物資</label>
                                 <select v-model="studentApp.itemId" @change="fillStudentAppItem" class="w-full p-2.5 border rounded-xl bg-slate-50 font-bold outline-none text-sm">
                                     <option value="">-- 請選擇品項 --</option>
                                     <option v-for="item in studentFilteredCatalog" :key="item.id" :value="item.id">[{{ item.id }}] {{ item.name }} (可用: {{ getAvailableStock(item.id) }} {{ item.unit }})</option>
